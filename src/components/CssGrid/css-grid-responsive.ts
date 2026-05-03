@@ -6,8 +6,8 @@ export const createGridTemplateAreas = (layout: string[][]): string => {
 
 export const createContainerStyle = (config: {
   layout?: readonly (readonly string[])[]
-  rows?: string[]
-  columns?: string[]
+  rows?: readonly string[]
+  columns?: readonly string[]
   containerStyle?: CssGridStyle
 }): CssGridStyle => {
   return {

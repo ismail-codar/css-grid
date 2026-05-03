@@ -4,6 +4,7 @@ import type { SafeFixedArray } from "../../typings/type-utils"
 import { useCssGridContext, type CssGridStyle } from "./CssGridContext"
 import { createContainerStyle, createResponsiveStyle } from "./css-grid-responsive"
 
+// Union of all area names in the layout
 type LayoutNames<TLayout extends readonly (readonly string[])[]> = TLayout[number][number]
 
 export type CssGridResponsiveConfig<
@@ -28,8 +29,10 @@ export type CssGridProps<
     childs: { [key in LayoutNames<TLayout>]: React.ReactNode }
   }
 
+// `const TLayout` (TS 5.0+): infers the layout array with const semantics in JSX,
+// giving literal tuple types and literal dimension lengths without requiring `as const`
 export const CssGrid = <
-  TLayout extends readonly (readonly string[])[] = readonly (readonly string[])[],
+  const TLayout extends readonly (readonly string[])[],
   TStyle extends CssGridStyle = CssGridStyle,
   TBreakpoint extends string = "xs" | "sm" | "md" | "lg" | "xl",
 >(
@@ -37,7 +40,10 @@ export const CssGrid = <
 ) => {
   const { render, breakpoints } = useCssGridContext()
 
-  const keys = useMemo(() => Object.keys(props.childs) as LayoutNames<TLayout>[], [props.childs])
+  const keys = useMemo(
+    () => Object.keys(props.childs) as LayoutNames<TLayout>[],
+    [props.childs],
+  )
 
   const breakpointKeys = useMemo(
     () => Object.keys(breakpoints) as TBreakpoint[],
@@ -57,9 +63,9 @@ export const CssGrid = <
 
   const containerStyle = useMemo(() => {
     const baseStyle = createContainerStyle({
-      layout: props.layout,
-      rows: props.rows,
-      columns: props.columns,
+      layout: props.layout as readonly (readonly string[])[] | undefined,
+      rows: props.rows as readonly string[] | undefined,
+      columns: props.columns as readonly string[] | undefined,
       containerStyle: props.containerStyle,
     })
 
@@ -67,7 +73,13 @@ export const CssGrid = <
       baseStyle: { display: "grid", ...baseStyle },
       responsiveConfigs,
       breakpoints: breakpoints as Record<TBreakpoint, string>,
-      createStyle: (config) => createContainerStyle(config),
+      createStyle: (config) =>
+        createContainerStyle({
+          layout: config.layout as readonly (readonly string[])[] | undefined,
+          rows: config.rows as readonly string[] | undefined,
+          columns: config.columns as readonly string[] | undefined,
+          containerStyle: config.containerStyle,
+        }),
     })
   }, [
     props.layout,
