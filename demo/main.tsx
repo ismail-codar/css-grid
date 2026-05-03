@@ -111,7 +111,7 @@ function DemoSection({ title, description, breakpointNote, children }: {
 
 function PageLayoutDemo() {
   return (
-    <CssGrid<'header' | 'sidebar' | 'main' | 'footer', 2, 3>
+    <CssGrid
       layout={[
         ['header', 'header'],
         ['sidebar', 'main'],
@@ -135,7 +135,7 @@ function PageLayoutDemo() {
 
 function DashboardDemo() {
   return (
-    <CssGrid<'topbar' | 'stat1' | 'stat2' | 'stat3' | 'chart' | 'feed', 3, 3>
+    <CssGrid
       layout={[
         ['topbar', 'topbar', 'topbar'],
         ['stat1',  'stat2',  'stat3'],
@@ -161,7 +161,7 @@ function DashboardDemo() {
 
 function AppShellDemo() {
   return (
-    <CssGrid<'topnav' | 'sidenav' | 'content' | 'aside', 3, 2>
+    <CssGrid
       layout={[
         ['topnav',  'topnav',  'topnav'],
         ['sidenav', 'content', 'aside'],
@@ -184,7 +184,7 @@ function AppShellDemo() {
 
 function LandingPageDemo() {
   return (
-    <CssGrid<'hero' | 'feat1' | 'feat2' | 'feat3' | 'cta', 3, 3>
+    <CssGrid
       layout={[
         ['hero',  'hero',  'hero'],
         ['feat1', 'feat2', 'feat3'],
@@ -209,7 +209,7 @@ function LandingPageDemo() {
 
 function MagazineDemo() {
   return (
-    <CssGrid<'lead' | 'article' | 'related' | 'sidebar', 3, 2>
+    <CssGrid
       layout={[
         ['lead',    'lead',    'sidebar'],
         ['article', 'related', 'sidebar'],

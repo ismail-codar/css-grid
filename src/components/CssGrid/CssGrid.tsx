@@ -1,47 +1,43 @@
 import type React from "react"
 import { useMemo } from "react"
-import type { FixedArray } from "../../typings/type-utils"
+import type { SafeFixedArray } from "../../typings/type-utils"
 import { useCssGridContext, type CssGridStyle } from "./CssGridContext"
 import { createContainerStyle, createResponsiveStyle } from "./css-grid-responsive"
 
+type LayoutNames<TLayout extends readonly (readonly string[])[]> = TLayout[number][number]
+
 export type CssGridResponsiveConfig<
-  N extends string,
-  C extends number,
-  R extends number,
+  TLayout extends readonly (readonly string[])[] = readonly (readonly string[])[],
   TStyle extends CssGridStyle = CssGridStyle,
 > = Partial<{
-  layout: FixedArray<FixedArray<N, C>, R>
-  rows: FixedArray<string, R>
-  columns: FixedArray<string, C>
+  layout: TLayout
+  rows: SafeFixedArray<string, TLayout["length"]>
+  columns: SafeFixedArray<string, TLayout[0]["length"]>
   containerStyle: TStyle
   childstyle: TStyle
-  childStyles: { [key in N]?: TStyle }
+  childStyles: { [key in LayoutNames<TLayout>]?: TStyle }
 }>
 
 export type CssGridProps<
-  N extends string,
-  C extends number,
-  R extends number,
+  TLayout extends readonly (readonly string[])[] = readonly (readonly string[])[],
   TStyle extends CssGridStyle = CssGridStyle,
   TBreakpoint extends string = "xs" | "sm" | "md" | "lg" | "xl",
-> = CssGridResponsiveConfig<N, C, R, TStyle> &
-  Partial<Record<TBreakpoint, CssGridResponsiveConfig<N, C, R, TStyle>>> & {
+> = CssGridResponsiveConfig<TLayout, TStyle> &
+  Partial<Record<TBreakpoint, CssGridResponsiveConfig<TLayout, TStyle>>> & {
     className?: string
-    childs: { [key in N]: React.ReactNode }
+    childs: { [key in LayoutNames<TLayout>]: React.ReactNode }
   }
 
 export const CssGrid = <
-  N extends string,
-  C extends number,
-  R extends number,
+  TLayout extends readonly (readonly string[])[] = readonly (readonly string[])[],
   TStyle extends CssGridStyle = CssGridStyle,
   TBreakpoint extends string = "xs" | "sm" | "md" | "lg" | "xl",
 >(
-  props: CssGridProps<N, C, R, TStyle, TBreakpoint>,
+  props: CssGridProps<TLayout, TStyle, TBreakpoint>,
 ) => {
   const { render, breakpoints } = useCssGridContext()
 
-  const keys = useMemo(() => Object.keys(props.childs) as N[], [props.childs])
+  const keys = useMemo(() => Object.keys(props.childs) as LayoutNames<TLayout>[], [props.childs])
 
   const breakpointKeys = useMemo(
     () => Object.keys(breakpoints) as TBreakpoint[],
@@ -49,34 +45,29 @@ export const CssGrid = <
   )
 
   const responsiveConfigs = useMemo(() => {
-    const result = {} as Partial<
-      Record<TBreakpoint, CssGridResponsiveConfig<N, C, R, TStyle>>
-    >
+    const result = {} as Partial<Record<TBreakpoint, CssGridResponsiveConfig<TLayout, TStyle>>>
     breakpointKeys.forEach((breakpoint) => {
       const config = (props as Record<string, unknown>)[breakpoint]
       if (config) {
-        result[breakpoint] = config as CssGridResponsiveConfig<N, C, R, TStyle>
+        result[breakpoint] = config as CssGridResponsiveConfig<TLayout, TStyle>
       }
     })
     return result
   }, [breakpointKeys, props])
 
   const containerStyle = useMemo(() => {
-    const baseStyle = createContainerStyle<N, C, R, TStyle>({
+    const baseStyle = createContainerStyle({
       layout: props.layout,
       rows: props.rows,
       columns: props.columns,
       containerStyle: props.containerStyle,
     })
 
-    return createResponsiveStyle<
-      TBreakpoint,
-      CssGridResponsiveConfig<N, C, R, TStyle>
-    >({
+    return createResponsiveStyle<TBreakpoint, CssGridResponsiveConfig<TLayout, TStyle>>({
       baseStyle: { display: "grid", ...baseStyle },
       responsiveConfigs,
       breakpoints: breakpoints as Record<TBreakpoint, string>,
-      createStyle: (config) => createContainerStyle<N, C, R, TStyle>(config),
+      createStyle: (config) => createContainerStyle(config),
     })
   }, [
     props.layout,
@@ -100,7 +91,7 @@ export const CssGrid = <
 
       const responsiveChildStyle = createResponsiveStyle<
         TBreakpoint,
-        CssGridResponsiveConfig<N, C, R, TStyle>
+        CssGridResponsiveConfig<TLayout, TStyle>
       >({
         baseStyle: baseChildStyle,
         responsiveConfigs,
