@@ -9,6 +9,10 @@ type LayoutNames<TLayout extends readonly (readonly string[])[]> = TLayout[numbe
 
 type AnyLayout = readonly (readonly string[])[]
 
+// Layout shape constrained to a given set of area names. Breakpoint layouts use
+// this so their cell values must be a subset of the parent layout's names.
+type LayoutOf<TNames extends string> = readonly (readonly TNames[])[]
+
 export type CssGridResponsiveConfig<
   TLayout extends AnyLayout = AnyLayout,
   TStyle extends CssGridStyle = CssGridStyle,
@@ -22,11 +26,12 @@ export type CssGridResponsiveConfig<
 }>
 
 export type CssGridBreakpointProps<
-  TXs extends AnyLayout = AnyLayout,
-  TSm extends AnyLayout = AnyLayout,
-  TMd extends AnyLayout = AnyLayout,
-  TLg extends AnyLayout = AnyLayout,
-  TXl extends AnyLayout = AnyLayout,
+  TLayout extends AnyLayout = AnyLayout,
+  TXs extends LayoutOf<LayoutNames<TLayout>> = LayoutOf<LayoutNames<TLayout>>,
+  TSm extends LayoutOf<LayoutNames<TLayout>> = LayoutOf<LayoutNames<TLayout>>,
+  TMd extends LayoutOf<LayoutNames<TLayout>> = LayoutOf<LayoutNames<TLayout>>,
+  TLg extends LayoutOf<LayoutNames<TLayout>> = LayoutOf<LayoutNames<TLayout>>,
+  TXl extends LayoutOf<LayoutNames<TLayout>> = LayoutOf<LayoutNames<TLayout>>,
   TStyle extends CssGridStyle = CssGridStyle,
 > = {
   xs?: CssGridResponsiveConfig<TXs, TStyle>
@@ -38,14 +43,14 @@ export type CssGridBreakpointProps<
 
 export type CssGridProps<
   TLayout extends AnyLayout = AnyLayout,
-  TXs extends AnyLayout = AnyLayout,
-  TSm extends AnyLayout = AnyLayout,
-  TMd extends AnyLayout = AnyLayout,
-  TLg extends AnyLayout = AnyLayout,
-  TXl extends AnyLayout = AnyLayout,
+  TXs extends LayoutOf<LayoutNames<TLayout>> = LayoutOf<LayoutNames<TLayout>>,
+  TSm extends LayoutOf<LayoutNames<TLayout>> = LayoutOf<LayoutNames<TLayout>>,
+  TMd extends LayoutOf<LayoutNames<TLayout>> = LayoutOf<LayoutNames<TLayout>>,
+  TLg extends LayoutOf<LayoutNames<TLayout>> = LayoutOf<LayoutNames<TLayout>>,
+  TXl extends LayoutOf<LayoutNames<TLayout>> = LayoutOf<LayoutNames<TLayout>>,
   TStyle extends CssGridStyle = CssGridStyle,
 > = CssGridResponsiveConfig<TLayout, TStyle> &
-  CssGridBreakpointProps<TXs, TSm, TMd, TLg, TXl, TStyle> & {
+  CssGridBreakpointProps<TLayout, TXs, TSm, TMd, TLg, TXl, TStyle> & {
     className?: string
     childs: { [key in LayoutNames<TLayout>]: React.ReactNode }
   }
@@ -111,11 +116,11 @@ const getUniqueLayoutNames = (
 // dimension-aware intellisense without a wrapping helper function.
 export const CssGrid = <
   const TLayout extends AnyLayout,
-  const TXs extends AnyLayout = AnyLayout,
-  const TSm extends AnyLayout = AnyLayout,
-  const TMd extends AnyLayout = AnyLayout,
-  const TLg extends AnyLayout = AnyLayout,
-  const TXl extends AnyLayout = AnyLayout,
+  const TXs extends LayoutOf<LayoutNames<TLayout>> = LayoutOf<LayoutNames<TLayout>>,
+  const TSm extends LayoutOf<LayoutNames<TLayout>> = LayoutOf<LayoutNames<TLayout>>,
+  const TMd extends LayoutOf<LayoutNames<TLayout>> = LayoutOf<LayoutNames<TLayout>>,
+  const TLg extends LayoutOf<LayoutNames<TLayout>> = LayoutOf<LayoutNames<TLayout>>,
+  const TXl extends LayoutOf<LayoutNames<TLayout>> = LayoutOf<LayoutNames<TLayout>>,
   TStyle extends CssGridStyle = CssGridStyle,
 >(
   props: CssGridProps<TLayout, TXs, TSm, TMd, TLg, TXl, TStyle>,
