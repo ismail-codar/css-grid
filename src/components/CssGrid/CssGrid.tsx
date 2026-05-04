@@ -1,8 +1,8 @@
 import type React from "react"
-import { useMemo } from "react"
+import { useEffect, useMemo, useState } from "react"
 import type { SafeFixedArray } from "../../typings/type-utils"
 import { useCssGridContext, type CssGridStyle } from "./CssGridContext"
-import { createContainerStyle, createResponsiveStyle } from "./css-grid-responsive"
+import { createContainerStyle } from "./css-grid-responsive"
 
 // Union of all area names in the layout
 type LayoutNames<TLayout extends readonly (readonly string[])[]> = TLayout[number][number]
@@ -36,9 +36,65 @@ export type CssGridProps<
     childs: { [key in LayoutNames<TLayout>]: React.ReactNode }
   }
 
-export const bpConfig = <const TBpLayout extends readonly (readonly string[])[]>(
+export const breakPointConfig = <const TBpLayout extends readonly (readonly string[])[]>(
   config: CssGridResponsiveConfig<TBpLayout>,
 ): CssGridResponsiveConfig<readonly (readonly string[])[]> => config
+
+const getActiveBreakpoint = (
+  breakpointEntries: readonly (readonly [string, string])[],
+): string | undefined => {
+  if (typeof window === "undefined" || breakpointEntries.length === 0) {
+    return undefined
+  }
+
+  if (breakpointEntries.length === 1) {
+    return window.matchMedia(`(min-width: ${breakpointEntries[0][1]})`).matches
+      ? breakpointEntries[0][0]
+      : undefined
+  }
+
+  for (let index = 0; index < breakpointEntries.length - 1; index += 1) {
+    const nextBreakpoint = breakpointEntries[index + 1]
+    if (!window.matchMedia(`(min-width: ${nextBreakpoint[1]})`).matches) {
+      return breakpointEntries[index][0]
+    }
+  }
+
+  return breakpointEntries[breakpointEntries.length - 1][0]
+}
+
+const useActiveBreakpoint = (
+  breakpointEntries: readonly (readonly [string, string])[],
+) => {
+  const [activeBreakpoint, setActiveBreakpoint] = useState(() =>
+    getActiveBreakpoint(breakpointEntries),
+  )
+
+  useEffect(() => {
+    if (typeof window === "undefined") return
+
+    const updateActiveBreakpoint = () => {
+      setActiveBreakpoint(getActiveBreakpoint(breakpointEntries))
+    }
+
+    updateActiveBreakpoint()
+    window.addEventListener("resize", updateActiveBreakpoint)
+
+    return () => {
+      window.removeEventListener("resize", updateActiveBreakpoint)
+    }
+  }, [breakpointEntries])
+
+  return activeBreakpoint
+}
+
+const getUniqueLayoutNames = (
+  layout?: readonly (readonly string[])[],
+): Set<string> | undefined => {
+  if (!layout) return undefined
+
+  return new Set(layout.flat())
+}
 
 // `const TLayout` (TS 5.0+): infers the layout array with const semantics in JSX,
 // giving literal tuple types and literal dimension lengths without requiring `as const`
@@ -50,15 +106,17 @@ export const CssGrid = <
 ) => {
   const { render, breakpoints } = useCssGridContext()
 
-  const keys = useMemo(
-    () => Object.keys(props.childs) as LayoutNames<TLayout>[],
-    [props.childs],
-  )
-
   const breakpointKeys = useMemo(
     () => Object.keys(breakpoints),
     [breakpoints],
   )
+
+  const breakpointEntries = useMemo(
+    () => Object.entries(breakpoints),
+    [breakpoints],
+  )
+
+  const activeBreakpoint = useActiveBreakpoint(breakpointEntries)
 
   type BpConfig = CssGridResponsiveConfig<readonly (readonly string[])[], TStyle>
 
@@ -73,6 +131,27 @@ export const CssGrid = <
     return result
   }, [breakpointKeys, props])
 
+  const activeConfig = activeBreakpoint
+    ? responsiveConfigs[activeBreakpoint]
+    : undefined
+
+  const activeLayoutNames = useMemo(
+    () =>
+      getUniqueLayoutNames(
+        (activeConfig?.layout ?? props.layout) as
+        | readonly (readonly string[])[]
+        | undefined,
+      ),
+    [activeConfig?.layout, props.layout],
+  )
+
+  const keys = useMemo(() => {
+    const childKeys = Object.keys(props.childs) as LayoutNames<TLayout>[]
+    if (!activeLayoutNames) return childKeys
+
+    return childKeys.filter((key) => activeLayoutNames.has(key))
+  }, [activeLayoutNames, props.childs])
+
   const containerStyle = useMemo(() => {
     const baseStyle = createContainerStyle({
       layout: props.layout as readonly (readonly string[])[] | undefined,
@@ -81,25 +160,22 @@ export const CssGrid = <
       containerStyle: props.containerStyle,
     })
 
-    return createResponsiveStyle<string, BpConfig>({
-      baseStyle: { display: "grid", ...baseStyle },
-      responsiveConfigs,
-      breakpoints,
-      createStyle: (config) =>
-        createContainerStyle({
-          layout: config.layout as readonly (readonly string[])[] | undefined,
-          rows: config.rows as readonly string[] | undefined,
-          columns: config.columns as readonly string[] | undefined,
-          containerStyle: config.containerStyle,
-        }),
-    })
+    const breakpointStyle = activeConfig
+      ? createContainerStyle({
+        layout: activeConfig.layout as readonly (readonly string[])[] | undefined,
+        rows: activeConfig.rows as readonly string[] | undefined,
+        columns: activeConfig.columns as readonly string[] | undefined,
+        containerStyle: activeConfig.containerStyle,
+      })
+      : {}
+
+    return { display: "grid", ...baseStyle, ...breakpointStyle }
   }, [
     props.layout,
     props.rows,
     props.columns,
     props.containerStyle,
-    responsiveConfigs,
-    breakpoints,
+    activeConfig,
   ])
 
   return render({
@@ -113,20 +189,17 @@ export const CssGrid = <
         ...props.childStyles?.[key],
       }
 
-      const responsiveChildStyle = createResponsiveStyle<string, BpConfig>({
-        baseStyle: baseChildStyle,
-        responsiveConfigs,
-        breakpoints,
-        createStyle: (config) => ({
-          ...config.childstyle,
-          ...config.childStyles?.[key],
-        }),
-      })
+      const breakpointChildStyle: CssGridStyle = activeConfig
+        ? {
+          ...activeConfig.childstyle,
+          ...activeConfig.childStyles?.[key],
+        }
+        : {}
 
       return render({
         element: "child",
         key,
-        style: responsiveChildStyle,
+        style: { ...baseChildStyle, ...breakpointChildStyle },
         children: props.childs[key],
       })
     }),

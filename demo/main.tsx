@@ -2,7 +2,7 @@ import { StrictMode, useEffect, useRef, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import { CssGrid, CssGridProvider } from '../src'
 import { mediaRenderer } from './renderer'
-import { bpConfig } from '../src/components/CssGrid/CssGrid'
+import { breakPointConfig } from '../src/components/CssGrid/CssGrid'
 
 // Inject global base styles
 const globalStyle = document.createElement('style')
@@ -119,7 +119,7 @@ function PageLayoutDemo() {
         ['footer', 'footer'],
       ]}
       columns={['220px', '1fr']}
-      rows={['56px', '1fr', '48px']}
+      rows={['56px', '1fr', '78px']}
       containerStyle={{ minHeight: '320px', gap: '8px' }}
       childstyle={{ borderRadius: '6px' }}
       childs={{
@@ -128,14 +128,16 @@ function PageLayoutDemo() {
         main: <Area name="main" bg="#1e40af" height="100%">Main Content</Area>,
         footer: <Area name="footer" bg="#475569">Footer</Area>,
       }}
-      xs={bpConfig({
+      xs={breakPointConfig({
         layout: [
           ["header"],
           ["main"],
           ["footer"]
         ],
         columns: ['1fr'],
-        rows: ['56px', '1fr', '48px'],
+        rows: ['56px', '1fr', '78px'],
+        containerStyle: { gap: '8px', background: "red" },
+        childstyle: { border: 'solid 2px black' },
       })}
     />
   )

@@ -1,4 +1,4 @@
-export { CssGrid } from "./CssGrid"
+export { CssGrid, breakPointConfig as bpConfig } from "./CssGrid"
 export type { CssGridProps, CssGridResponsiveConfig, CssGridBreakpointProps } from "./CssGrid"
 export {
   CssGridContext,
