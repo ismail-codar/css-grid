@@ -1,5 +1,5 @@
 export { CssGrid } from "./CssGrid"
-export type { CssGridProps, CssGridResponsiveConfig } from "./CssGrid"
+export type { CssGridProps, CssGridResponsiveConfig, CssGridBreakpointProps } from "./CssGrid"
 export {
   CssGridContext,
   CssGridProvider,

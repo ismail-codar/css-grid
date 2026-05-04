@@ -19,12 +19,19 @@ export type CssGridResponsiveConfig<
   childStyles: { [key in LayoutNames<TLayout>]?: TStyle }
 }>
 
+export type CssGridBreakpointProps<TStyle extends CssGridStyle = CssGridStyle> = {
+  xs?: CssGridResponsiveConfig<readonly (readonly string[])[], TStyle>
+  sm?: CssGridResponsiveConfig<readonly (readonly string[])[], TStyle>
+  md?: CssGridResponsiveConfig<readonly (readonly string[])[], TStyle>
+  lg?: CssGridResponsiveConfig<readonly (readonly string[])[], TStyle>
+  xl?: CssGridResponsiveConfig<readonly (readonly string[])[], TStyle>
+}
+
 export type CssGridProps<
   TLayout extends readonly (readonly string[])[] = readonly (readonly string[])[],
   TStyle extends CssGridStyle = CssGridStyle,
-  TBreakpoint extends string = "xs" | "sm" | "md" | "lg" | "xl",
 > = CssGridResponsiveConfig<TLayout, TStyle> &
-  Partial<Record<TBreakpoint, CssGridResponsiveConfig<readonly (readonly string[])[], TStyle>>> & {
+  CssGridBreakpointProps<TStyle> & {
     className?: string
     childs: { [key in LayoutNames<TLayout>]: React.ReactNode }
   }
@@ -38,9 +45,8 @@ export const bpConfig = <const TBpLayout extends readonly (readonly string[])[]>
 export const CssGrid = <
   const TLayout extends readonly (readonly string[])[],
   TStyle extends CssGridStyle = CssGridStyle,
-  TBreakpoint extends string = "xs" | "sm" | "md" | "lg" | "xl",
 >(
-  props: CssGridProps<TLayout, TStyle, TBreakpoint>,
+  props: CssGridProps<TLayout, TStyle>,
 ) => {
   const { render, breakpoints } = useCssGridContext()
 
@@ -50,16 +56,18 @@ export const CssGrid = <
   )
 
   const breakpointKeys = useMemo(
-    () => Object.keys(breakpoints) as TBreakpoint[],
+    () => Object.keys(breakpoints),
     [breakpoints],
   )
 
+  type BpConfig = CssGridResponsiveConfig<readonly (readonly string[])[], TStyle>
+
   const responsiveConfigs = useMemo(() => {
-    const result = {} as Partial<Record<TBreakpoint, CssGridResponsiveConfig<readonly (readonly string[])[], TStyle>>>
+    const result: Partial<Record<string, BpConfig>> = {}
     breakpointKeys.forEach((breakpoint) => {
       const config = (props as Record<string, unknown>)[breakpoint]
       if (config) {
-        result[breakpoint] = config as CssGridResponsiveConfig<readonly (readonly string[])[], TStyle>
+        result[breakpoint] = config as BpConfig
       }
     })
     return result
@@ -73,10 +81,10 @@ export const CssGrid = <
       containerStyle: props.containerStyle,
     })
 
-    return createResponsiveStyle<TBreakpoint, CssGridResponsiveConfig<readonly (readonly string[])[], TStyle>>({
+    return createResponsiveStyle<string, BpConfig>({
       baseStyle: { display: "grid", ...baseStyle },
       responsiveConfigs,
-      breakpoints: breakpoints as Record<TBreakpoint, string>,
+      breakpoints,
       createStyle: (config) =>
         createContainerStyle({
           layout: config.layout as readonly (readonly string[])[] | undefined,
@@ -105,13 +113,10 @@ export const CssGrid = <
         ...props.childStyles?.[key],
       }
 
-      const responsiveChildStyle = createResponsiveStyle<
-        TBreakpoint,
-        CssGridResponsiveConfig<readonly (readonly string[])[], TStyle>
-      >({
+      const responsiveChildStyle = createResponsiveStyle<string, BpConfig>({
         baseStyle: baseChildStyle,
         responsiveConfigs,
-        breakpoints: breakpoints as Record<TBreakpoint, string>,
+        breakpoints,
         createStyle: (config) => ({
           ...config.childstyle,
           ...config.childStyles?.[key],
