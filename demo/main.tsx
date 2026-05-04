@@ -2,7 +2,6 @@ import { StrictMode, useEffect, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import { CssGrid, CssGridProvider } from '../src'
 import { mediaRenderer } from './renderer'
-import { breakPointConfig } from '../src/components/CssGrid/CssGrid'
 
 // Inject global base styles
 const globalStyle = document.createElement('style')
@@ -128,7 +127,7 @@ function PageLayoutDemo() {
         main: <Area name="main" bg="#1e40af" height="100%">Main Content</Area>,
         footer: <Area name="footer" bg="#475569">Footer</Area>,
       }}
-      xs={breakPointConfig({
+      xs={{
         layout: [
           ["header"],
           ["main"],
@@ -138,7 +137,7 @@ function PageLayoutDemo() {
         rows: ['56px', '1fr', '78px'],
         containerStyle: { gap: '8px', background: "red" },
         childstyle: { border: 'solid 2px black' },
-      })}
+      }}
     />
   )
 }

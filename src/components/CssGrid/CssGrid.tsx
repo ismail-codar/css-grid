@@ -7,8 +7,10 @@ import { createContainerStyle } from "./css-grid-responsive"
 // Union of all area names in the layout
 type LayoutNames<TLayout extends readonly (readonly string[])[]> = TLayout[number][number]
 
+type AnyLayout = readonly (readonly string[])[]
+
 export type CssGridResponsiveConfig<
-  TLayout extends readonly (readonly string[])[] = readonly (readonly string[])[],
+  TLayout extends AnyLayout = AnyLayout,
   TStyle extends CssGridStyle = CssGridStyle,
 > = Partial<{
   layout: TLayout
@@ -19,26 +21,34 @@ export type CssGridResponsiveConfig<
   childStyles: { [key in LayoutNames<TLayout>]?: TStyle }
 }>
 
-export type CssGridBreakpointProps<TStyle extends CssGridStyle = CssGridStyle> = {
-  xs?: CssGridResponsiveConfig<readonly (readonly string[])[], TStyle>
-  sm?: CssGridResponsiveConfig<readonly (readonly string[])[], TStyle>
-  md?: CssGridResponsiveConfig<readonly (readonly string[])[], TStyle>
-  lg?: CssGridResponsiveConfig<readonly (readonly string[])[], TStyle>
-  xl?: CssGridResponsiveConfig<readonly (readonly string[])[], TStyle>
+export type CssGridBreakpointProps<
+  TXs extends AnyLayout = AnyLayout,
+  TSm extends AnyLayout = AnyLayout,
+  TMd extends AnyLayout = AnyLayout,
+  TLg extends AnyLayout = AnyLayout,
+  TXl extends AnyLayout = AnyLayout,
+  TStyle extends CssGridStyle = CssGridStyle,
+> = {
+  xs?: CssGridResponsiveConfig<TXs, TStyle>
+  sm?: CssGridResponsiveConfig<TSm, TStyle>
+  md?: CssGridResponsiveConfig<TMd, TStyle>
+  lg?: CssGridResponsiveConfig<TLg, TStyle>
+  xl?: CssGridResponsiveConfig<TXl, TStyle>
 }
 
 export type CssGridProps<
-  TLayout extends readonly (readonly string[])[] = readonly (readonly string[])[],
+  TLayout extends AnyLayout = AnyLayout,
+  TXs extends AnyLayout = AnyLayout,
+  TSm extends AnyLayout = AnyLayout,
+  TMd extends AnyLayout = AnyLayout,
+  TLg extends AnyLayout = AnyLayout,
+  TXl extends AnyLayout = AnyLayout,
   TStyle extends CssGridStyle = CssGridStyle,
 > = CssGridResponsiveConfig<TLayout, TStyle> &
-  CssGridBreakpointProps<TStyle> & {
+  CssGridBreakpointProps<TXs, TSm, TMd, TLg, TXl, TStyle> & {
     className?: string
     childs: { [key in LayoutNames<TLayout>]: React.ReactNode }
   }
-
-export const breakPointConfig = <const TBpLayout extends readonly (readonly string[])[]>(
-  config: CssGridResponsiveConfig<TBpLayout>,
-): CssGridResponsiveConfig<readonly (readonly string[])[]> => config
 
 const getActiveBreakpoint = (
   breakpointEntries: readonly (readonly [string, string])[],
@@ -96,13 +106,19 @@ const getUniqueLayoutNames = (
   return new Set(layout.flat())
 }
 
-// `const TLayout` (TS 5.0+): infers the layout array with const semantics in JSX,
-// giving literal tuple types and literal dimension lengths without requiring `as const`
+// `const` modifier (TS 5.0+) on every layout-shaped generic preserves literal
+// tuple types from inline JSX values, so each breakpoint config gets its own
+// dimension-aware intellisense without a wrapping helper function.
 export const CssGrid = <
-  const TLayout extends readonly (readonly string[])[],
+  const TLayout extends AnyLayout,
+  const TXs extends AnyLayout = AnyLayout,
+  const TSm extends AnyLayout = AnyLayout,
+  const TMd extends AnyLayout = AnyLayout,
+  const TLg extends AnyLayout = AnyLayout,
+  const TXl extends AnyLayout = AnyLayout,
   TStyle extends CssGridStyle = CssGridStyle,
 >(
-  props: CssGridProps<TLayout, TStyle>,
+  props: CssGridProps<TLayout, TXs, TSm, TMd, TLg, TXl, TStyle>,
 ) => {
   const { render, breakpoints } = useCssGridContext()
 
@@ -118,7 +134,7 @@ export const CssGrid = <
 
   const activeBreakpoint = useActiveBreakpoint(breakpointEntries)
 
-  type BpConfig = CssGridResponsiveConfig<readonly (readonly string[])[], TStyle>
+  type BpConfig = CssGridResponsiveConfig<AnyLayout, TStyle>
 
   const responsiveConfigs = useMemo(() => {
     const result: Partial<Record<string, BpConfig>> = {}
