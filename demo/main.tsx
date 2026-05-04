@@ -127,6 +127,14 @@ function PageLayoutDemo() {
         main: <Area name="main" bg="#1e40af" height="100%">Main Content</Area>,
         footer: <Area name="footer" bg="#475569">Footer</Area>,
       }}
+      xs={{
+        layout: [
+          ["header"],
+          ["sidebar"],
+          ["footer"]
+        ],
+        columns: ['220px', '1fr']
+      }}
     />
   )
 }

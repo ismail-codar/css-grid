@@ -24,7 +24,7 @@ export type CssGridProps<
   TStyle extends CssGridStyle = CssGridStyle,
   TBreakpoint extends string = "xs" | "sm" | "md" | "lg" | "xl",
 > = CssGridResponsiveConfig<TLayout, TStyle> &
-  Partial<Record<TBreakpoint, CssGridResponsiveConfig<TLayout, TStyle>>> & {
+  Partial<Record<TBreakpoint, CssGridResponsiveConfig<readonly (readonly string[])[], TStyle>>> & {
     className?: string
     childs: { [key in LayoutNames<TLayout>]: React.ReactNode }
   }
@@ -51,11 +51,11 @@ export const CssGrid = <
   )
 
   const responsiveConfigs = useMemo(() => {
-    const result = {} as Partial<Record<TBreakpoint, CssGridResponsiveConfig<TLayout, TStyle>>>
+    const result = {} as Partial<Record<TBreakpoint, CssGridResponsiveConfig<readonly (readonly string[])[], TStyle>>>
     breakpointKeys.forEach((breakpoint) => {
       const config = (props as Record<string, unknown>)[breakpoint]
       if (config) {
-        result[breakpoint] = config as CssGridResponsiveConfig<TLayout, TStyle>
+        result[breakpoint] = config as CssGridResponsiveConfig<readonly (readonly string[])[], TStyle>
       }
     })
     return result
@@ -69,7 +69,7 @@ export const CssGrid = <
       containerStyle: props.containerStyle,
     })
 
-    return createResponsiveStyle<TBreakpoint, CssGridResponsiveConfig<TLayout, TStyle>>({
+    return createResponsiveStyle<TBreakpoint, CssGridResponsiveConfig<readonly (readonly string[])[], TStyle>>({
       baseStyle: { display: "grid", ...baseStyle },
       responsiveConfigs,
       breakpoints: breakpoints as Record<TBreakpoint, string>,
@@ -103,7 +103,7 @@ export const CssGrid = <
 
       const responsiveChildStyle = createResponsiveStyle<
         TBreakpoint,
-        CssGridResponsiveConfig<TLayout, TStyle>
+        CssGridResponsiveConfig<readonly (readonly string[])[], TStyle>
       >({
         baseStyle: baseChildStyle,
         responsiveConfigs,
