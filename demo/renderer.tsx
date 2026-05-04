@@ -34,6 +34,7 @@ function _inject(id: string, declarations: string, wrapper?: string): void {
  */
 export const mediaRenderer: CssGridRenderer = ({ className, style, children, key }) => {
   const classes: string[] = className ? [className] : []
+  const prefix = `cg-${key != null ? `${key}-` : ''}`
 
   if (style) {
     const base: [string, string][] = []
@@ -43,7 +44,7 @@ export const mediaRenderer: CssGridRenderer = ({ className, style, children, key
         const decls = Object.entries(v as Record<string, string>)
           .map(([p, val]) => `${_k(p)}:${val}`)
           .join(';')
-        const id = `cg-${_h(k + decls)}`
+        const id = `${prefix}${_h(k + decls)}`
         classes.push(id)
         _inject(id, decls, k)
       } else {
@@ -53,7 +54,7 @@ export const mediaRenderer: CssGridRenderer = ({ className, style, children, key
 
     if (base.length) {
       const decls = base.map(([p, v]) => `${p}:${v}`).join(';')
-      const id = `cg-${_h(decls)}`
+      const id = `${prefix}${_h(decls)}`
       classes.push(id)
       _inject(id, decls)
     }
