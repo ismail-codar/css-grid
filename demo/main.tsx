@@ -164,6 +164,30 @@ function DashboardDemo() {
         chart: <Area name="chart" bg="#7c3aed" height="100%">Revenue Chart</Area>,
         feed: <Area name="feed" bg="#be185d" height="100%">Activity Feed</Area>,
       }}
+      xs={{
+        layout: [
+          ['topbar'],
+          ['stat1'],
+          ['stat2'],
+          ['stat3'],
+          ['chart'],
+          ['feed'],
+        ],
+        columns: ['1fr'],
+        rows: ['56px', '88px', '88px', '88px', '200px', '200px'],
+        containerStyle: { gap: '8px' },
+      }}
+      md={{
+        layout: [
+          ['topbar', 'topbar'],
+          ['stat1',  'stat2'],
+          ['stat3',  'stat3'],
+          ['chart',  'feed'],
+        ],
+        columns: ['1fr', '1fr'],
+        rows: ['56px', '88px', '88px', '200px'],
+        containerStyle: { gap: '10px' },
+      }}
     />
   )
 }
@@ -186,6 +210,24 @@ function AppShellDemo() {
         sidenav: <Area name="sidenav" bg="#1e3a5f" height="100%">Side Menu</Area>,
         content: <Area name="content" bg="#1e293b" height="100%">Workspace</Area>,
         aside:   <Area name="aside"   bg="#312e81" height="100%">Properties Panel</Area>,
+      }}
+      xs={{
+        layout: [
+          ['topnav'],
+          ['content'],
+        ],
+        columns: ['1fr'],
+        rows: ['56px', '1fr'],
+        containerStyle: { minHeight: '360px', gap: '8px' },
+      }}
+      md={{
+        layout: [
+          ['topnav',  'topnav'],
+          ['sidenav', 'content'],
+        ],
+        columns: ['200px', '1fr'],
+        rows: ['56px', '1fr'],
+        containerStyle: { minHeight: '360px', gap: '8px' },
       }}
     />
   )
@@ -212,6 +254,29 @@ function LandingPageDemo() {
         feat3: <Area name="feat3" bg="#3730a3" height="100%">Feature 3</Area>,
         cta:   <Area name="cta"   bg="#9f1239" height="100%">Call to Action</Area>,
       }}
+      xs={{
+        layout: [
+          ['hero'],
+          ['feat1'],
+          ['feat2'],
+          ['feat3'],
+          ['cta'],
+        ],
+        columns: ['1fr'],
+        rows: ['160px', '120px', '120px', '120px', '64px'],
+        containerStyle: { gap: '8px' },
+      }}
+      md={{
+        layout: [
+          ['hero',  'hero'],
+          ['feat1', 'feat2'],
+          ['feat3', 'feat3'],
+          ['cta',   'cta'],
+        ],
+        columns: ['1fr', '1fr'],
+        rows: ['160px', '120px', '120px', '64px'],
+        containerStyle: { gap: '10px' },
+      }}
     />
   )
 }
@@ -234,6 +299,24 @@ function MagazineDemo() {
         article: <Area name="article" bg="#1a3a1a" height="100%">Article Body</Area>,
         related: <Area name="related" bg="#2d1b4e" height="100%">Related Articles</Area>,
         sidebar: <Area name="sidebar" bg="#7c2d12" height="100%">Sidebar</Area>,
+      }}
+      xs={{
+        layout: [
+          ['lead'],
+          ['article'],
+        ],
+        columns: ['1fr'],
+        rows: ['220px', '1fr'],
+        containerStyle: { minHeight: '420px', gap: '8px' },
+      }}
+      sm={{
+        layout: [
+          ['lead',    'lead'],
+          ['article', 'related'],
+        ],
+        columns: ['1fr', '260px'],
+        rows: ['220px', '1fr'],
+        containerStyle: { minHeight: '420px', gap: '10px' },
       }}
     />
   )
