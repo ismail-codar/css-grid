@@ -1,4 +1,4 @@
-import { StrictMode, useEffect, useRef, useState } from 'react'
+import { StrictMode, useEffect, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import { CssGrid, CssGridProvider } from '../src'
 import { mediaRenderer } from './renderer'
@@ -252,17 +252,6 @@ const BP_COLORS: Record<string, string> = {
 
 function App() {
   const bp = useBreakpoint()
-  const [manualBp, setManualBp] = useState<string | null>(null)
-  const prevBp = useRef(bp)
-
-  useEffect(() => {
-    if (bp !== prevBp.current) {
-      prevBp.current = bp
-      setManualBp(null)
-    }
-  }, [bp])
-
-  const activeBp = manualBp ?? bp
 
   return (
     <CssGridProvider value={{ render: mediaRenderer, breakpoints }}>
@@ -284,26 +273,22 @@ function App() {
           {Object.entries(BP_COLORS).map(([name, color]) => (
             <span
               key={name}
-              onClick={() => setManualBp(name)}
               style={{
                 fontSize: '0.75rem',
                 fontWeight: 700,
                 padding: '2px 10px',
                 borderRadius: '999px',
-                background: activeBp === name ? color : 'transparent',
-                color: activeBp === name ? '#fff' : '#94a3b8',
-                border: `1.5px solid ${activeBp === name ? color : '#e2e8f0'}`,
+                background: bp === name ? color : 'transparent',
+                color: bp === name ? '#fff' : '#94a3b8',
+                border: `1.5px solid ${bp === name ? color : '#e2e8f0'}`,
                 transition: 'all 0.15s',
-                cursor: 'pointer',
-                userSelect: 'none',
               }}
             >
               {name}
             </span>
           ))}
           <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
-            ({breakpoints[activeBp as keyof typeof breakpoints] ? `≥ ${breakpoints[activeBp as keyof typeof breakpoints]}` : '< 480px'})
-            {manualBp && <span style={{ marginLeft: '4px', fontStyle: 'italic' }}>(manual)</span>}
+            ({breakpoints[bp as keyof typeof breakpoints] ? `≥ ${breakpoints[bp as keyof typeof breakpoints]}` : '< 480px'})
           </span>
         </div>
 
