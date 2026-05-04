@@ -131,7 +131,7 @@ function PageLayoutDemo() {
       xs={bpConfig({
         layout: [
           ["header"],
-          ["sidebar"],
+          ["main"],
           ["footer"]
         ],
         columns: ['1fr'],
