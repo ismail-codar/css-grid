@@ -29,6 +29,10 @@ export type CssGridProps<
     childs: { [key in LayoutNames<TLayout>]: React.ReactNode }
   }
 
+export const bpConfig = <const TBpLayout extends readonly (readonly string[])[]>(
+  config: CssGridResponsiveConfig<TBpLayout>,
+): CssGridResponsiveConfig<readonly (readonly string[])[]> => config
+
 // `const TLayout` (TS 5.0+): infers the layout array with const semantics in JSX,
 // giving literal tuple types and literal dimension lengths without requiring `as const`
 export const CssGrid = <

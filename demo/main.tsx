@@ -2,6 +2,7 @@ import { StrictMode, useEffect, useRef, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import { CssGrid, CssGridProvider } from '../src'
 import { mediaRenderer } from './renderer'
+import { bpConfig } from '../src/components/CssGrid/CssGrid'
 
 // Inject global base styles
 const globalStyle = document.createElement('style')
@@ -127,14 +128,15 @@ function PageLayoutDemo() {
         main: <Area name="main" bg="#1e40af" height="100%">Main Content</Area>,
         footer: <Area name="footer" bg="#475569">Footer</Area>,
       }}
-      xs={{
+      xs={bpConfig({
         layout: [
           ["header"],
           ["sidebar"],
           ["footer"]
         ],
-        columns: ['220px', '1fr']
-      }}
+        columns: ['1fr'],
+        rows: ['56px', '1fr', '48px'],
+      })}
     />
   )
 }
