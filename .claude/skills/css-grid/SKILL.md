@@ -1,9 +1,9 @@
 ---
 name: css-grid
-description: "@icodar/css-grid React kütüphanesi ile responsive CSS Grid layout oluşturma rehberi. TRIGGER: kullanıcı CssGrid komponentini, grid template areas tabanlı layout, responsive breakpoint (xs/sm/md/lg/xl) yapısını, CssGridProvider veya özel renderer kullanmak istediğinde; içe aktarımlarda `@icodar/css-grid` veya yerel `src/components/CssGrid`, kolonlara ayırma, farklı cihaz boyutları görüldüğünde."
+description: "css-grid React kütüphanesi ile responsive CSS Grid layout oluşturma rehberi. TRIGGER: kullanıcı CssGrid komponentini, grid template areas tabanlı layout, responsive breakpoint (xs/sm/md/lg/xl) yapısını, CssGridProvider veya özel renderer kullanmak istediğinde; içe aktarımlarda `css-grid` veya yerel `src/components/CssGrid`, kolonlara ayırma, farklı cihaz boyutları görüldüğünde."
 ---
 
-# @icodar/css-grid Kullanım Rehberi
+# css-grid Kullanım Rehberi
 
 CSS Grid `grid-template-areas` tabanlı, type-safe responsive layout React kütüphanesidir. Tek bir bildirimle layout matrisi, satır/sütun ölçüleri ve breakpoint override'ları tanımlanır.
 
@@ -26,7 +26,7 @@ CSS Grid `grid-template-areas` tabanlı, type-safe responsive layout React küt�
 ## Temel Kullanım
 
 ```tsx
-import { CssGrid } from "@icodar/css-grid"
+import { CssGrid } from "css-grid"
 
 export function PageLayout() {
   return (
@@ -85,7 +85,7 @@ Breakpoint propları (`xs`, `sm`, `md`, `lg`, `xl`) base konfigürasyonun bir al
 `CssGridProvider` ile `render` ve `breakpoints` özelleştirilir. `render` her container ve her child için çağrılır (`element: "container" | "child"`).
 
 ```tsx
-import { CssGridProvider, type CssGridRenderer } from "@icodar/css-grid"
+import { CssGridProvider, type CssGridRenderer } from "css-grid"
 
 const myRenderer: CssGridRenderer = ({ element, className, style, children, key }) => (
   <div key={key} data-cg={element} className={className} style={style as React.CSSProperties}>
@@ -128,7 +128,7 @@ import {
   type CssGridRenderer,
   type CssGridStyle,
   type FixedArray,
-} from "@icodar/css-grid"
+} from "css-grid"
 ```
 
 ## Sık Yapılan Hatalar (kaçınılması gerekenler)
