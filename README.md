@@ -1,13 +1,13 @@
-# @icodar/css-grid
+# css-grid
 
 Type-safe CSS Grid layout component for React with responsive breakpoint support via grid template areas.
 
 ## Installation
 
 ```bash
-npm install @icodar/css-grid
+npm install css-grid@https://github.com/ismail-codar/css-grid
 # or
-yarn add @icodar/css-grid
+yarn add css-grid@https://github.com/ismail-codar/css-grid
 ```
 
 **Peer dependencies:** `react >= 18`, `react-dom >= 18`
@@ -15,7 +15,7 @@ yarn add @icodar/css-grid
 ## Quick start
 
 ```tsx
-import { CssGrid } from '@icodar/css-grid'
+import { CssGrid } from 'css-grid'
 
 function PageLayout() {
   return (
@@ -112,7 +112,7 @@ Each breakpoint config accepts `layout`, `rows`, `columns`, `containerStyle`, `c
 Override breakpoints and/or the renderer globally.
 
 ```tsx
-import { CssGridProvider } from '@icodar/css-grid'
+import { CssGridProvider } from 'css-grid'
 
 const breakpoints = {
   sm: '600px',
@@ -133,7 +133,7 @@ function App() {
 The default renderer outputs plain `<div>` elements with inline styles. Provide a custom renderer to inject CSS classes, support media queries, or use a different element type.
 
 ```tsx
-import type { CssGridRenderer } from '@icodar/css-grid'
+import type { CssGridRenderer } from 'css-grid'
 
 const myRenderer: CssGridRenderer = ({ element, className, style, children, key }) => {
   return (
@@ -164,7 +164,7 @@ const myRenderer: CssGridRenderer = ({ element, className, style, children, key 
 import {
   createGridTemplateAreas,
   createContainerStyle,
-} from '@icodar/css-grid'
+} from 'css-grid'
 
 // "header header" / "sidebar main"
 createGridTemplateAreas([['header', 'header'], ['sidebar', 'main']])
