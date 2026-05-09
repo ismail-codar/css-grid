@@ -1,6 +1,6 @@
 ---
 name: css-grid
-description: "@icodar/css-grid React kütüphanesi ile responsive CSS Grid layout oluşturma rehberi. TRIGGER: kullanıcı CssGrid komponentini, grid template areas tabanlı layout, responsive breakpoint (xs/sm/md/lg/xl) yapısını, CssGridProvider veya özel renderer kullanmak istediğinde; içe aktarımlarda `@icodar/css-grid` veya yerel `src/components/CssGrid` görüldüğünde."
+description: "@icodar/css-grid React kütüphanesi ile responsive CSS Grid layout oluşturma rehberi. TRIGGER: kullanıcı CssGrid komponentini, grid template areas tabanlı layout, responsive breakpoint (xs/sm/md/lg/xl) yapısını, CssGridProvider veya özel renderer kullanmak istediğinde; içe aktarımlarda `@icodar/css-grid` veya yerel `src/components/CssGrid`, kolonlara ayırma, farklı cihaz boyutları görüldüğünde."
 ---
 
 # @icodar/css-grid Kullanım Rehberi
