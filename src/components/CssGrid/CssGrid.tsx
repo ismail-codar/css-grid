@@ -152,9 +152,15 @@ export const CssGrid = <
     return result
   }, [breakpointKeys, props])
 
-  const activeConfig = activeBreakpoint
-    ? responsiveConfigs[activeBreakpoint]
-    : undefined
+  const activeConfig = useMemo(() => {
+    if (!activeBreakpoint) return undefined
+    const idx = breakpointEntries.findIndex(([key]) => key === activeBreakpoint)
+    for (let i = idx; i >= 0; i--) {
+      const key = breakpointEntries[i][0]
+      if (responsiveConfigs[key]) return responsiveConfigs[key]
+    }
+    return undefined
+  }, [activeBreakpoint, breakpointEntries, responsiveConfigs])
 
   const activeLayoutNames = useMemo(
     () =>
